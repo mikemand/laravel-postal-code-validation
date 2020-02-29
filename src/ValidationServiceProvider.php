@@ -24,7 +24,7 @@ class ValidationServiceProvider extends ServiceProvider
         }
 
         $this->app->singleton(PostalCodeFor::class);
-        $this->app->singleton(Validator::class);
+        $this->registerValidator();
     }
 
     /**
@@ -45,5 +45,19 @@ class ValidationServiceProvider extends ServiceProvider
             $validator->extend('postal_code_for', 'Axlon\PostalCodeValidation\Extensions\PostalCodeFor@validate');
             $validator->replacer('postal_code_for', 'Axlon\PostalCodeValidation\Extensions\PostalCodeFor@replace');
         }
+    }
+
+    /**
+     * Register the validator.
+     *
+     * @return void
+     */
+    protected function registerValidator(): void
+    {
+        $this->app->singleton('validation.postal_codes', function () {
+            return new Validator(require __DIR__ . '/../resources/formats.php');
+        });
+
+        $this->app->alias('validation.postal_codes', Validator::class);
     }
 }

@@ -16,11 +16,12 @@ class Validator
     /**
      * Create a new postal code validator.
      *
+     * @param array $rules
      * @return void
      */
-    public function __construct()
+    public function __construct(array $rules)
     {
-        $this->rules = require __DIR__ . '/../resources/formats.php';
+        $this->rules = $rules;
     }
 
     /**
@@ -31,6 +32,10 @@ class Validator
      */
     public function getExample(string $countryCode): ?string
     {
+        if (!$this->supports($countryCode)) {
+            throw new InvalidArgumentException("Unsupported country code '{$countryCode}'");
+        }
+
         return $this->rules[strtoupper($countryCode)]['example'] ?? null;
     }
 
@@ -40,39 +45,43 @@ class Validator
      * @param string $countryCode
      * @return string|null
      */
-    protected function getRule(string $countryCode): ?string
+    public function getPattern(string $countryCode): ?string
     {
+        if (!$this->supports($countryCode)) {
+            throw new InvalidArgumentException("Unsupported country code '{$countryCode}'");
+        }
+
         return $this->rules[strtoupper($countryCode)]['pattern'];
     }
 
     /**
      * Determine if the country code is supported.
      *
-     * @param string|null $countryCode
+     * @param string $countryCode
      * @return bool
      */
-    public function supports(?string $countryCode): bool
+    public function supports(string $countryCode): bool
     {
-        return $countryCode && array_key_exists(strtoupper($countryCode), $this->rules);
+        return array_key_exists(strtoupper($countryCode), $this->rules);
     }
 
     /**
-     * Validate the postal code.
+     * Validate a postal code.
      *
      * @param string $countryCode
-     * @param string $postalCode
+     * @param string|null $postalCode
      * @return bool
      */
-    public function validate(string $countryCode, string $postalCode): bool
+    public function validate(string $countryCode, ?string $postalCode): bool
     {
         if (!$this->supports($countryCode)) {
-            throw new InvalidArgumentException("Unsupported country code $countryCode");
+            throw new InvalidArgumentException("Unsupported country code '{$countryCode}'");
         }
 
-        if (($pattern = $this->getRule($countryCode)) === null) {
+        if (($pattern = $this->getPattern($countryCode)) === null) {
             return true;
         }
 
-        return (bool)preg_match($pattern, $postalCode);
+        return preg_match($pattern, (string)$postalCode) === 1;
     }
 }
