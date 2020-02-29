@@ -83,7 +83,7 @@ fwrite($handle, <<<EOT
  *
  * Last modified: $timestamp
  */
-return
+return 
 EOT
 );
 fwrite($handle, stripslashes(VarExporter::export($compiled)));
