@@ -4,6 +4,7 @@ namespace Axlon\PostalCodeValidation\Tests\Unit;
 
 use Axlon\PostalCodeValidation\Extensions\PostalCode;
 use Axlon\PostalCodeValidation\Validator;
+use Illuminate\Foundation\Application;
 
 class PostalCodeValidationTest extends ValidationTest
 {
@@ -32,7 +33,7 @@ class PostalCodeValidationTest extends ValidationTest
      */
     public function testEmptyInput()
     {
-        if (version_compare($this->getLaravelVersion(), '5.3.0', '<')) {
+        if (version_compare(Application::VERSION, '5.3.0', '<')) {
             # Before Laravel 5.3 nullable was the implicit default
             # See: https://laravel.com/docs/5.3/upgrade#upgrade-5.3.0
             $this->markTestSkipped('Laravel < 5.3 won\'t run validation for empty input');

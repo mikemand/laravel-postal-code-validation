@@ -26,9 +26,7 @@
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^6.3",
-        "illuminate/filesystem": "^5.1 || ^6.0",
-        "illuminate/translation": "^5.1 || ^6.0",
-        "ocramius/package-versions": "^1.4",
+        "laravel/framework":"^5.1 || ^6.0",
         "phpunit/phpunit": "^7.0",
         "symfony/var-exporter": "^4.0"
     },
