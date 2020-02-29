@@ -16,6 +16,8 @@ risky: true
 
 finder:
   exclude:
+    - bin
     - resources
+    - tests
     - vendor
   name: "*.php"

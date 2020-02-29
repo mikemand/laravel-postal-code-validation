@@ -1,5 +1,6 @@
 * text=auto
 
+resources/formats.php linguist-generated=true
 tests/ export-ignore
 .editorconfig export-ignore
 .gitattributes export-ignore
