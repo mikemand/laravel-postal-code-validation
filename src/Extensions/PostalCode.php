@@ -3,6 +3,7 @@
 namespace Axlon\PostalCodeValidation\Extensions;
 
 use Axlon\PostalCodeValidation\Validator;
+use InvalidArgumentException;
 
 class PostalCode
 {
@@ -63,19 +64,15 @@ class PostalCode
      */
     public function validate(string $attribute, ?string $value, array $parameters): bool
     {
-        if (!$value) {
+        if (empty($parameters)) {
+            throw new InvalidArgumentException('Validation rule \'postal_code\' requires at least 1 parameter.');
+        }
+
+        if (empty($value)) {
             return false;
         }
 
-        if (empty($parameters)) {
-            return true;
-        }
-
         foreach ($parameters as $parameter) {
-            if (!$this->validator->supports($parameter)) {
-                return false;
-            }
-
             if ($this->validator->validate($parameter, $value)) {
                 return true;
             }
