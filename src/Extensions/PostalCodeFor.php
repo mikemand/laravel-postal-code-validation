@@ -2,21 +2,22 @@
 
 namespace Axlon\PostalCodeValidation\Extensions;
 
-use Axlon\PostalCodeValidation\Validator;
+use Axlon\PostalCodeValidation\Validator as PostalCodeValidator;
 use Countable;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Validation\Validator as BaseValidator;
+use Illuminate\Validation\Validator;
+use InvalidArgumentException;
+use UnexpectedValueException;
 
 class PostalCodeFor
 {
     /**
-     * The request data.
+     * The replacements.
      *
      * @var array
      */
-    protected $request;
+    protected $replacements;
 
     /**
      * The postal code validator.
@@ -28,13 +29,52 @@ class PostalCodeFor
     /**
      * Create a new PostalCodeFor validator extension.
      *
-     * @param \Illuminate\Http\Request $request
      * @param \Axlon\PostalCodeValidation\Validator $validator
+     * @return void
      */
-    public function __construct(Request $request, Validator $validator)
+    public function __construct(PostalCodeValidator $validator)
     {
-        $this->request = $request->all();
+        $this->replacements = [];
         $this->validator = $validator;
+    }
+
+    /**
+     * Add a replacement.
+     *
+     * @param string $attribute
+     * @param string $field
+     * @param string $countryCode
+     * @return void
+     */
+    protected function addReplacement(string $attribute, string $field, string $countryCode): void
+    {
+        $this->replacements[$attribute][$field] = $countryCode;
+    }
+
+    /**
+     * Extract request data from the validator.
+     *
+     * @param \Illuminate\Contracts\Validation\Validator $validator
+     * @return array
+     */
+    protected function extractRequestData(ValidatorContract $validator): array
+    {
+        if (!$validator instanceof Validator) {
+            throw new UnexpectedValueException('Unsupported validator type, cannot retrieve data');
+        }
+
+        return $validator->getData();
+    }
+
+    /**
+     * Get replacements for an attribute.
+     *
+     * @param string $attribute
+     * @return array
+     */
+    protected function getReplacements(string $attribute): array
+    {
+        return $this->replacements[$attribute] ?? [];
     }
 
     /**
@@ -48,43 +88,17 @@ class PostalCodeFor
      */
     public function replace(string $message, string $attribute, string $rule, array $parameters): string
     {
-        $countries = [];
-        $examples = [];
+        $foundCountryCodes = Arr::only($this->getReplacements($attribute), $parameters);
 
-        $parameters = array_filter($parameters, function (string $parameter) {
-            return Arr::has($this->request, $parameter);
-        });
+        $foundExamples = array_map(function (string $countryCode) {
+            return $this->validator->getExample($countryCode);
+        }, $foundCountryCodes);
 
-        foreach ($parameters as $parameter) {
-            $countryCode = Arr::get($this->request, $parameter);
-
-            if (!$this->validator->supports($countryCode)) {
-                continue;
-            }
-
-            $countries[] = $countryCode;
-            $examples[] = $this->validator->getExample($countryCode);
-        }
-
-        $countries = implode(', ', array_unique($countries));
-        $examples = implode(', ', array_unique(array_filter($examples)));
-
-        return str_replace([':countries', ':examples'], [$countries, $examples], $message);
-    }
-
-    /**
-     * Set the request data from the validator.
-     *
-     * @param \Illuminate\Contracts\Validation\Validator $validator
-     * @return void
-     */
-    protected function setRequestData(ValidatorContract $validator): void
-    {
-        if (!$validator instanceof BaseValidator) {
-            return;
-        }
-
-        $this->request = $validator->getData();
+        return str_replace([':countries', ':examples', ':fields'], [
+            implode(', ', array_unique($foundCountryCodes)),
+            implode(', ', array_unique(array_filter($foundExamples))),
+            implode(', ', $parameters),
+        ], $message);
     }
 
     /**
@@ -98,22 +112,22 @@ class PostalCodeFor
      */
     public function validate(string $attribute, ?string $value, array $parameters, ValidatorContract $validator): bool
     {
-        $this->setRequestData($validator);
+        if (empty($parameters)) {
+            throw new InvalidArgumentException('Validation rule \'postal_code_for\' requires at least 1 parameter.');
+        }
 
-        $parameters = array_filter($parameters, function (string $parameter) {
-            return $this->verifyExistence($parameter);
+        $data = $this->extractRequestData($validator);
+
+        $parameters = array_filter($parameters, function (string $parameter) use ($data) {
+            return $this->verifyExistence($data, $parameter);
         });
 
         if (empty($parameters)) {
             return true;
         }
 
-        if (!$value) {
-            return false;
-        }
-
         foreach ($parameters as $parameter) {
-            $countryCode = Arr::get($this->request, $parameter);
+            $countryCode = Arr::get($data, $parameter);
 
             if (!$this->validator->supports($countryCode)) {
                 continue;
@@ -122,6 +136,8 @@ class PostalCodeFor
             if ($this->validator->validate($countryCode, $value)) {
                 return true;
             }
+
+            $this->addReplacement($attribute, $parameter, $countryCode);
         }
 
         return false;
@@ -130,13 +146,14 @@ class PostalCodeFor
     /**
      * Verify that a referenced attribute exists.
      *
+     * @param array $data
      * @param string $key
      * @return bool
      * @see \Illuminate\Validation\Validator::validateRequired()
      */
-    protected function verifyExistence(string $key): bool
+    protected function verifyExistence(array $data, string $key): bool
     {
-        $value = Arr::get($this->request, $key);
+        $value = Arr::get($data, $key);
 
         if ($value === null) {
             return false;
