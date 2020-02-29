@@ -46,7 +46,7 @@ class PostalCodeFor
      * @param string[] $parameters
      * @return string
      */
-    public function replace(string $message, string $attribute, string $rule, array $parameters)
+    public function replace(string $message, string $attribute, string $rule, array $parameters): string
     {
         $countries = [];
         $examples = [];
@@ -78,7 +78,7 @@ class PostalCodeFor
      * @param \Illuminate\Contracts\Validation\Validator $validator
      * @return void
      */
-    protected function setRequestData(ValidatorContract $validator)
+    protected function setRequestData(ValidatorContract $validator): void
     {
         if (!$validator instanceof BaseValidator) {
             return;
@@ -96,7 +96,7 @@ class PostalCodeFor
      * @param \Illuminate\Contracts\Validation\Validator $validator
      * @return bool
      */
-    public function validate(string $attribute, ?string $value, array $parameters, ValidatorContract $validator)
+    public function validate(string $attribute, ?string $value, array $parameters, ValidatorContract $validator): bool
     {
         $this->setRequestData($validator);
 
@@ -134,11 +134,11 @@ class PostalCodeFor
      * @return bool
      * @see \Illuminate\Validation\Validator::validateRequired()
      */
-    protected function verifyExistence(string $key)
+    protected function verifyExistence(string $key): bool
     {
         $value = Arr::get($this->request, $key);
 
-        if (is_null($value)) {
+        if ($value === null) {
             return false;
         } elseif (is_string($value) && trim($value) === '') {
             return false;

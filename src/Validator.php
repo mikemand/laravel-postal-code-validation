@@ -29,7 +29,7 @@ class Validator
      * @param string $countryCode
      * @return string|null
      */
-    public function getExample(string $countryCode)
+    public function getExample(string $countryCode): ?string
     {
         return $this->rules[strtoupper($countryCode)]['example'] ?? null;
     }
@@ -40,7 +40,7 @@ class Validator
      * @param string $countryCode
      * @return string|null
      */
-    protected function getRule(string $countryCode)
+    protected function getRule(string $countryCode): ?string
     {
         return $this->rules[strtoupper($countryCode)]['pattern'];
     }
@@ -51,7 +51,7 @@ class Validator
      * @param string|null $countryCode
      * @return bool
      */
-    public function supports(?string $countryCode)
+    public function supports(?string $countryCode): bool
     {
         return $countryCode && array_key_exists(strtoupper($countryCode), $this->rules);
     }
@@ -63,13 +63,13 @@ class Validator
      * @param string $postalCode
      * @return bool
      */
-    public function validate(string $countryCode, string $postalCode)
+    public function validate(string $countryCode, string $postalCode): bool
     {
         if (!$this->supports($countryCode)) {
             throw new InvalidArgumentException("Unsupported country code $countryCode");
         }
 
-        if (is_null($pattern = $this->getRule($countryCode))) {
+        if (($pattern = $this->getRule($countryCode)) === null) {
             return true;
         }
 

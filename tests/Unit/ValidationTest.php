@@ -12,14 +12,16 @@ use PHPUnit\Framework\TestCase;
 abstract class ValidationTest extends TestCase
 {
     /**
-     * @var \Illuminate\Contracts\Validation\Factory
+     * The validator.
+     *
+     * @var \Illuminate\Validation\Factory
      */
     protected $factory;
 
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -38,7 +40,7 @@ abstract class ValidationTest extends TestCase
      * @param array $rules
      * @return void
      */
-    public function assertFails(array $request, array $rules)
+    public function assertFails(array $request, array $rules): void
     {
         static::assertThat($request, new Fails($this->factory, $rules));
     }
@@ -48,9 +50,9 @@ abstract class ValidationTest extends TestCase
      *
      * @param array $request
      * @param array $rules
-     * @return void.
+     * @return void
      */
-    public function assertPasses(array $request, array $rules)
+    public function assertPasses(array $request, array $rules): void
     {
         static::assertThat($request, new Passes($this->factory, $rules));
     }
@@ -58,9 +60,9 @@ abstract class ValidationTest extends TestCase
     /**
      * Get the validation factory.
      *
-     * @return \Illuminate\Contracts\Validation\Factory
+     * @return \Illuminate\Validation\Factory
      */
-    public function getFactory()
+    public function getFactory(): Factory
     {
         return $this->factory;
     }

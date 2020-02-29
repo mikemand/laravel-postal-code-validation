@@ -18,7 +18,7 @@ class ValidatorTest extends TestCase
      *
      * @return array
      */
-    public function provideCountryCodes()
+    public function provideCountryCodes(): array
     {
         return [
             'Belgium' => ['BE'],
@@ -41,7 +41,7 @@ class ValidatorTest extends TestCase
      *
      * @return array
      */
-    public function providePostalCodes()
+    public function providePostalCodes(): array
     {
         return [
             'Belgium' => ['BE', '1620'],
@@ -65,7 +65,7 @@ class ValidatorTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = new Validator();
     }
@@ -77,7 +77,7 @@ class ValidatorTest extends TestCase
      * @return void
      * @dataProvider provideCountryCodes
      */
-    public function testExamples(string $countryCode)
+    public function testExamples(string $countryCode): void
     {
         $this->assertTrue($this->validator->supports($countryCode));
 
@@ -96,7 +96,7 @@ class ValidatorTest extends TestCase
      * @return void
      * @dataProvider providePostalCodes
      */
-    public function testValidation(string $countryCode, string $postalCode)
+    public function testValidation(string $countryCode, string $postalCode): void
     {
         $this->assertTrue($this->validator->validate($countryCode, $postalCode));
     }
@@ -106,7 +106,7 @@ class ValidatorTest extends TestCase
      *
      * @return void
      */
-    public function testValidationWithUnsupportedCountry()
+    public function testValidationWithUnsupportedCountry(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupported country code XX');

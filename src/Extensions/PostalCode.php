@@ -33,7 +33,7 @@ class PostalCode
      * @param string[] $parameters
      * @return string
      */
-    public function replace(string $message, string $attribute, string $rule, array $parameters)
+    public function replace(string $message, string $attribute, string $rule, array $parameters): string
     {
         $countries = [];
         $examples = [];
@@ -61,7 +61,7 @@ class PostalCode
      * @param string[] $parameters
      * @return bool
      */
-    public function validate(string $attribute, ?string $value, array $parameters)
+    public function validate(string $attribute, ?string $value, array $parameters): bool
     {
         if (!$value) {
             return false;

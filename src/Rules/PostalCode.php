@@ -25,7 +25,7 @@ class PostalCode
      * @param bool $dependant
      * @return void
      */
-    public function __construct(array $parameters, bool $dependant)
+    protected function __construct(array $parameters, bool $dependant)
     {
         $this->dependant = $dependant;
         $this->parameters = $parameters;
@@ -36,7 +36,7 @@ class PostalCode
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return 'postal_code' . ($this->dependant ? '_for:' : ':') . implode(',', $this->parameters);
     }
@@ -47,7 +47,7 @@ class PostalCode
      * @param string ...$parameters
      * @return static
      */
-    public static function forCountry(string ...$parameters)
+    public static function forCountry(string ...$parameters): self
     {
         return new static($parameters, false);
     }
@@ -58,7 +58,7 @@ class PostalCode
      * @param string ...$parameters
      * @return static
      */
-    public static function forInput(string ...$parameters)
+    public static function forInput(string ...$parameters): self
     {
         return new static($parameters, true);
     }
@@ -69,7 +69,7 @@ class PostalCode
      * @param string ...$parameters
      * @return $this
      */
-    public function or(string ...$parameters)
+    public function or(string ...$parameters): self
     {
         $this->parameters = array_merge($this->parameters, $parameters);
 

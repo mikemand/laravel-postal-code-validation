@@ -19,7 +19,7 @@ class PostalCodeForValidationTest extends ValidationTest
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -40,7 +40,7 @@ class PostalCodeForValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testEmptyInput()
+    public function testEmptyInput(): void
     {
         if (version_compare(Application::VERSION, '5.3.0', '<')) {
             # Before Laravel 5.3 nullable was the implicit default
@@ -59,7 +59,7 @@ class PostalCodeForValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testErrorMessage()
+    public function testErrorMessage(): void
     {
         $request = ['country' => 'PL', 'postal_code' => 'Incorrect postal code'];
         $rules = ['postal_code' => 'postal_code_for:country'];
@@ -76,7 +76,7 @@ class PostalCodeForValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testEmptyParameterList()
+    public function testEmptyParameterList(): void
     {
         $request = ['postal_code' => '75008'];
         $rules = ['postal_code' => 'postal_code_for'];
@@ -89,7 +89,7 @@ class PostalCodeForValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testValidationOfInvalidInput()
+    public function testValidationOfInvalidInput(): void
     {
         # Invalid postal code
         $request = ['postal_code' => 'Incorrect postal code', 'country' => 'BE'];
@@ -109,7 +109,7 @@ class PostalCodeForValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testValidationOfValidInput()
+    public function testValidationOfValidInput(): void
     {
         # Regular input
         $request = ['postal_code' => '1234 AB', 'country' => 'NL'];
@@ -135,7 +135,7 @@ class PostalCodeForValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testValidAsterisksValidation()
+    public function testValidAsterisksValidation(): void
     {
         if ($this->strategy !== 'extendDependent') {
             $this->markTestSkipped('Dependent validation rules not supported');
@@ -171,7 +171,7 @@ class PostalCodeForValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testInvalidAsterisksValidation()
+    public function testInvalidAsterisksValidation(): void
     {
         if ($this->strategy !== 'extendDependent') {
             $this->markTestSkipped('Dependent validation rules not supported');

@@ -11,7 +11,7 @@ class PostalCodeValidationTest extends ValidationTest
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -31,7 +31,7 @@ class PostalCodeValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testEmptyInput()
+    public function testEmptyInput(): void
     {
         if (version_compare(Application::VERSION, '5.3.0', '<')) {
             # Before Laravel 5.3 nullable was the implicit default
@@ -50,7 +50,7 @@ class PostalCodeValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testEmptyParameterList()
+    public function testEmptyParameterList(): void
     {
         $request = ['postal_code' => '75008'];
         $rules = ['postal_code' => 'postal_code'];
@@ -63,7 +63,7 @@ class PostalCodeValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testErrorMessage()
+    public function testErrorMessage(): void
     {
         $request = ['postal_code' => 'Incorrect postal code'];
         $rules = ['postal_code' => 'postal_code:PL'];
@@ -80,7 +80,7 @@ class PostalCodeValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testValidationOfInvalidInput()
+    public function testValidationOfInvalidInput(): void
     {
         # Invalid postal code
         $request = ['postal_code' => 'Incorrect postal code'];
@@ -100,7 +100,7 @@ class PostalCodeValidationTest extends ValidationTest
      *
      * @return void
      */
-    public function testValidationOfValidInput()
+    public function testValidationOfValidInput(): void
     {
         $request = ['postal_code' => '1234 AB'];
         $rules = ['postal_code' => 'postal_code:NL'];

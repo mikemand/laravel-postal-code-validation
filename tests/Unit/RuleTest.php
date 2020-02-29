@@ -12,10 +12,11 @@ class RuleTest extends TestCase
      *
      * @return void
      */
-    public function testDependentRuleCreation()
+    public function testDependentRuleCreation(): void
     {
         $this->assertEquals('postal_code_for:', (string)PostalCode::forInput());
-        $this->assertEquals('postal_code_for:foo,bar,baz', (string)PostalCode::forInput('foo', 'bar')->or('baz'));
+        $this->assertEquals('postal_code_for:foo', (string)PostalCode::forInput('foo'));
+        $this->assertEquals('postal_code_for:bar,baz', (string)PostalCode::forInput('bar')->or('baz'));
     }
 
     /**
@@ -23,9 +24,10 @@ class RuleTest extends TestCase
      *
      * @return void
      */
-    public function testExplicitRuleCreation()
+    public function testExplicitRuleCreation(): void
     {
         $this->assertEquals('postal_code:', (string)PostalCode::forCountry());
-        $this->assertEquals('postal_code:foo,bar,baz', (string)PostalCode::forCountry('foo', 'bar')->or('baz'));
+        $this->assertEquals('postal_code:foo', (string)PostalCode::forCountry('foo'));
+        $this->assertEquals('postal_code:bar,baz', (string)PostalCode::forCountry('bar')->or('baz'));
     }
 }

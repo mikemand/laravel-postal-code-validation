@@ -9,11 +9,15 @@ use PHPUnit\Framework\Constraint\Constraint;
 class Passes extends Constraint
 {
     /**
+     * The validator.
+     *
      * @var \Illuminate\Contracts\Validation\Factory
      */
     protected $factory;
 
     /**
+     * The validation rules.
+     *
      * @var array
      */
     protected $rules;
@@ -27,8 +31,6 @@ class Passes extends Constraint
      */
     public function __construct(Factory $factory, array $rules)
     {
-        parent::__construct();
-
         $this->factory = $factory;
         $this->rules = $rules;
     }
@@ -55,7 +57,7 @@ class Passes extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function evaluate($other, $description = '', $returnResult = false)
+    public function evaluate($other, string $description = '', bool $returnResult = false): ?bool
     {
         $success = !$this->factory->make($other, $this->rules)->fails();
 
