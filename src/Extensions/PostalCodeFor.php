@@ -3,7 +3,6 @@
 namespace Axlon\PostalCodeValidation\Extensions;
 
 use Axlon\PostalCodeValidation\Validator as PostalCodeValidator;
-use Countable;
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Validator;
@@ -150,16 +149,15 @@ class PostalCodeFor
      * @param string $key
      * @return bool
      * @see \Illuminate\Validation\Validator::validateRequired()
+     * @codeCoverageIgnore
      */
     protected function verifyExistence(array $data, string $key): bool
     {
         $value = Arr::get($data, $key);
 
-        if ($value === null) {
+        if (\is_null($value)) {
             return false;
-        } elseif (is_string($value) && trim($value) === '') {
-            return false;
-        } elseif ((is_array($value) || $value instanceof Countable) && count($value) < 1) {
+        } elseif (\is_string($value) && trim($value) === '') {
             return false;
         }
 
